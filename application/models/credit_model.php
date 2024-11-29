@@ -130,20 +130,10 @@ class credit_model extends CI_Model
 
 	public function get_credit_data_new($id, $start, $length, $cari_data)
 	{
-		$this->db->select("$this->tbl_name.ID, CONCAT($this->tbl_name.TransactionCode, $this->tbl_name.TransactionID) AS Code", FALSE)				
-				->select("$this->tbl_name.Amount, $this->tbl_name.Description, $this->tbl_name.CreatedDateTime", TRUE)
-				->from($this->tbl_name)
-				->join($this->mem_tbl, "$this->tbl_name.MemberID=$this->mem_tbl.ID", "inner")
-				->where("$this->tbl_name.MemberID", $id)
-				->like('TransactionCode', $cari_data, 'both')
-				->or_like('Amount', $cari_data, 'both')
-				->or_like('Description', $cari_data, 'both')
-				->or_like("$this->tbl_name.CreatedDateTime", $cari_data, 'both')
-				->limit($length, $start)
-				->order_by("$this->tbl_name.ID", "desc");
+		$sql = "SELECT t1.ID, CONCAT(t1.TransactionCode, t1.TransactionID) AS Code, t1.Amount, t1.Description, t1.CreatedDateTime FROM $this->tbl_name t1 INNER JOIN $this->mem_tbl t2 ON t1.MemberID = t2.ID WHERE t1.MemberID = $id AND (t1.TransactionCode LIKE '%$cari_data%' OR t1.Amount LIKE '%$cari_data%' OR t1.Description LIKE '%$cari_data%' OR t1.CreatedDateTime LIKE '%$cari_data%') ORDER BY t1.ID DESC LIMIT $start, $length";
 
-		return $this->db->get()->result_array();					
-
+		$result = $this->db->query($sql);
+		return $result->result_array();
 	}	
 	
 	public function get_datatable()
