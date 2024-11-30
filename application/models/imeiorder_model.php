@@ -213,19 +213,10 @@ class imeiorder_model extends CI_Model
 
 	public function get_imei_data_new($id, $start, $length, $cari_data)
 	{
-		$this->db->select("$this->tbl_name.ID, $this->tbl_name.IMEI, $this->tbl_method.Title, $this->tbl_method.Price, $this->tbl_name.Code, $this->tbl_name.Note, $this->tbl_name.Status,  $this->tbl_name.CreatedDateTime, $this->tbl_name.UpdatedDateTime", TRUE)
-				->from($this->tbl_name)
-				->join($this->tbl_method, "$this->tbl_name.MethodID=$this->tbl_method.ID", "inner")
-				->where("$this->tbl_name.MemberID",$id)
-				->like('IMEI', $cari_data, 'both')
-				// ->or_like('Title', $cari_data, 'both')
-				// ->or_like('Code', $cari_data, 'both')
-				// ->or_like('Note', $cari_data, 'both')
-				->or_like("$this->tbl_name.Status", $cari_data, 'both')
-				->limit($length, $start)
-				->order_by("$this->tbl_name.ID", "desc");
-				
-				return $this->db->get()->result_array();					
+		$sql = "SELECT t1.ID, t1.IMEI, t2.Title, t2.Price, t1.Code, t1.Note, t1.Status, t1.CreatedDateTime, t1.UpdatedDateTime FROM $this->tbl_name t1 INNER JOIN $this->tbl_method t2 ON t1.MethodID = t2.ID WHERE t1.MemberID = $id AND (t1.IMEI LIKE '%$cari_data%' OR t2.Title LIKE '%$cari_data%' OR t1.Code LIKE '%$cari_data%' OR t1.Note LIKE '%$cari_data%' OR t1.Status LIKE '%$cari_data%') ORDER BY t1.ID DESC LIMIT $start, $length";
+
+		$result = $this->db->query($sql);
+		return $result->result_array();
 	}
 
 	public function get_imei_data_new_detail($id, $id_order)
