@@ -97,7 +97,7 @@ class Autoresponder extends FSD_Controller
 	public function update()
 	{
 		$this->load->library('form_validation');
-		$this->load->library('image_lib');
+		$this->load->helper('image_note');
 				
 		$data = $this->input->post(NULL,TRUE);
 		$id = $data['ID'];
@@ -112,6 +112,11 @@ class Autoresponder extends FSD_Controller
 		}
 		else
 		{
+			$deletedString = str_replace('[removed]', '', $data['Message']);
+
+			$note_helper = saveNoteImage(html_entity_decode($deletedString), "1");
+            $data['Message'] = $note_helper['dom'];
+
 			unset($data['ID']);						
 			$data['Status'] = isset($data['Status'])?"Enabled":"Disabled"; 
 			$data['UpdatedDateTime'] = date("Y-m-d H:i:s");
