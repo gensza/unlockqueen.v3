@@ -38,7 +38,6 @@ function saveNoteImage($note, $id)
 
                     //change src attribute to image
                     $img->setAttribute('src', $sourcePath);
-                    $img->setAttribute('style', 'width: 100%;');
                 }
             }
         }
